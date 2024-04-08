@@ -16,11 +16,20 @@ namespace Presentacion
 {
     public partial class frmDetalles : Form
     {
+        #region CAMPOS
+        //Campo para comprobar si se modifica o no las propiedades del boton.
         private bool edit = false;
+
+        //Cuando se crea este formulario el contructor asigno los valores del boton 
+        //en este campo mediante la propiedad del mismo
         private BotonArticulo boton;
 
-        public BotonArticulo Boton { get { return boton; } set { boton = value; } }
+        #endregion
 
+        #region PROPIEDADES
+
+        //Las propiedades de esta clase permite agregar los valores del boton a las diferente labels o controles del formulario
+        public BotonArticulo Boton { get { return boton; } set { boton = value; } }
         public string Nombre { get { return lblNombreArticulo.Text; } set { lblNombreArticulo.Text = value; } }
         public string Descripcion { get { return lblDescripcion.Text; } set { lblDescripcion.Text = value; } }
         public string Codigo { get { return lblCodigo.Text; } set { lblCodigo.Text = value; } }
@@ -31,6 +40,13 @@ namespace Presentacion
         public string Marca { get { return lblMarca.Text; } set { lblMarca.Text = value; } }
         public decimal Precio { get { return Helper.StringToDecimal(lblPrecio.Text); } set { lblPrecio.Text = value.ToString("C", CultureInfo.CreateSpecificCulture("es-AR")); } }
 
+        #endregion
+
+        //CONSTRUCTOR DE LA CLASE
+
+        //El constructo de esta clase o este formulario recibe un boton con todos los valores necesarios.
+        //Este es utilizado para asignar valores a los controles del formulario y comparar si el articulo es 
+        //modificado o no.
         public frmDetalles(BotonArticulo boton)
         {
             InitializeComponent();
@@ -47,6 +63,9 @@ namespace Presentacion
             Precio = boton.PrecioBoton;
         }
 
+        #region MÉTODOS
+
+        //Método que muestra u oculta controles
         private void MostarControlesEdit(bool ver, bool ocultar)
         {
             btnModificar.Visible = ocultar;
@@ -79,18 +98,26 @@ namespace Presentacion
             MostarDatosControlesEdit();
             CargarDatosComboBox();
         }
+        //Método para agregar valores que pueden ser seleccionado por el usuario al comboBox
+        //de categoría o marca.
         private void CargarDatosComboBox()
         {
+            //Obtengo los datos de la DB, el metodo CargarDatosCategoria() retorna una lista que es
+            //asignada a la propiedad DataSource del cboCategoria .
             cboEditCategoria.DataSource = Helper.CargarDatosCategoria();
-            cboEditCategoria.ValueMember = "IdCategoria";
-            cboEditCategoria.DisplayMember = "DescripcionCategoria";
-            cboEditCategoria.SelectedIndex = IdCategoria - 1;
+            cboEditCategoria.ValueMember = "IdCategoria"; //Clave valor
+            cboEditCategoria.DisplayMember = "DescripcionCategoria"; //Valor que se muestra
+            cboEditCategoria.SelectedIndex = IdCategoria - 1; //valor con el que se inicia el cbo
 
+            //Obtengo los datos de la DB, el metodo CargarDatosMarca() retorna una lista que es
+            //asignada a la propiedad DataSource del cboMarca.
             cboEditMarca.DataSource = Helper.CargarDatosMarca();
-            cboEditMarca.ValueMember = "IdMarca";
-            cboEditMarca.DisplayMember = "DescripcionMarca";
-            cboEditMarca.SelectedIndex = IdMarca - 1;
+            cboEditMarca.ValueMember = "IdMarca"; //Clave valor
+            cboEditMarca.DisplayMember = "DescripcionMarca"; //Valor que se muestra
+            cboEditMarca.SelectedIndex = IdMarca - 1; //valor con el que se inicia el cbo
         }
+        //Muestra los datos del boton como placeHolder de los txtBox correspondientes
+        //al igual que lo hace con los cbo. Para que el usuario puedad ver los valores que debería modificar o no.
         private void MostarDatosControlesEdit()
         {
             txtEditNombre.PlaceholderText = boton.NombreBoton;
@@ -102,6 +129,7 @@ namespace Presentacion
             cboEditCategoria.SelectedItem = boton.CategoriaBoton.DescripcionCategoria;
             cboEditMarca.SelectedItem = boton.MarcaBoton.DescripcionMarca;
         }
+        //Método que asigna un valor a la propiedad IdMarca según el item seleccionado del cboMarca
         private void ConfigurarIdMarca(string marca)
         {
             if(marca == "Samsung")
@@ -125,6 +153,7 @@ namespace Presentacion
                 IdMarca = 5;
             }
         }
+        //Método que asigna un valor a la propiedad IdCategoria según el item seleccionado del cboCategoria
         private void ConfigurarIdCategoria(string categoria)
         {
             if (categoria == "Celulares")
@@ -145,6 +174,9 @@ namespace Presentacion
             }
 
         }
+        //Método compara y controla si el usuario modifica algun valor, en relacion de los controles que permiten
+        //ingresar datos y las propiedades del boton, en caso que exita diferencia entre estas,
+        //se produce la modificación del artículo tanto en la interfaz como en la DB.
         private void ComprobarCambios()
         {
             try
@@ -191,6 +223,7 @@ namespace Presentacion
                     this.UrlImagen = txtEditUrlImagen.Text;
                     edit = true;
                 }
+
                 if (edit)
                 {
                     MessageBox.Show("Se han guardado los cambios.", "Artículo Modificado", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -207,15 +240,24 @@ namespace Presentacion
             }
         }
 
+        #endregion
+
+        #region MÉTODOS PARA CONFIGURAR EVENTOS
+
+        //Al hacer click en el boton modificar, se muestran los controles que permiten ingresar datos y 
+        //se ocultan las etiquetas donde el usuario podia ver los valores del artículo.
         private void BtnModificar_Click(object sender, EventArgs e)
         {
             MostarControlesEdit(true, false);
         }
+        //Al hacer click en aceptar, en primer lugar se comprueba si existe alguna modificación y luego se ocultan
+        //algunos controles y se muestran otros.
         private void BtnAccept_Click(object sender, EventArgs e)
         {
-            MostarControlesEdit(false, true);
             ComprobarCambios();            
-        }        
+            MostarControlesEdit(false, true);
+        } 
+        //Método que cambia los valores de ciertas propiedades de los botnes aceptar y cancelar.
         private void BtnAcceptCancel_MouseEnter(object sender, EventArgs e)
         {
             if (sender == btnAccept)
@@ -229,6 +271,7 @@ namespace Presentacion
                 btnCancel.IconColor = System.Drawing.Color.White;
             }
         }
+        //Método que cambia los valores de ciertas propiedades de los botnes aceptar y cancelar.
         private void BtnAcceptCancel_MouseLeave(object sender, EventArgs e)
         {
             if (sender == btnAccept)
@@ -242,14 +285,18 @@ namespace Presentacion
                 btnCancel.IconColor = System.Drawing.Color.FromArgb(175, 0, 0);
             }
         }
+        //Al hacer click en el boton se cierra el formulario
         private void BtnClose_Click(object sender, EventArgs e)
         {
             Close();
         }
+        //Cuando cambiar el texto que del txtUrlImagen se llama al método CargarImagen de la clase helper
+        //para mostrar la imagen en el PictureBox del formulario.
         private void TxtUrlImagen_TextChanged(object sender, EventArgs e)
         {
             Helper.CargarImagen(imgProducto, txtEditUrlImagen.Text);
         }
+        //Método que controla lo que se ingresa en el textBox de precio. Solo números y una sola coma.
         private void TxtPrecio_KeyPress(object sender, KeyPressEventArgs e)
         {
             if ((e.KeyChar < 48 || e.KeyChar > 59) && e.KeyChar != 44 && e.KeyChar != 8)
@@ -261,7 +308,7 @@ namespace Presentacion
                 e.Handled = true;
             }
         }
-
+        //Si cambia el item seleccionado de algun comboBox se asigna un determinado valor a IdMarca o IdCategoria.
         private void cboEditCategoria_SelectionChangeCommitted(object sender, EventArgs e)
         {
             if (cboEditMarca.SelectedItem.ToString() != lblMarca.Text)
@@ -275,5 +322,6 @@ namespace Presentacion
                 ConfigurarIdCategoria(Categoria);
             }
         }
+        #endregion
     }
 }

@@ -8,6 +8,10 @@ using Dominio;
 
 namespace Negocio
 {
+    //En esta clase solo defino métodos que me permiten realizar consultas u operaciones contra la DB.
+    
+    //*¿Podría ser una una clase del tipo static, para solo utilizar sus métodos sin instanciar objetos?*
+
     public class ArticuloNegocio
     {
         private List<Articulo> listaArticulos = new List<Articulo>();

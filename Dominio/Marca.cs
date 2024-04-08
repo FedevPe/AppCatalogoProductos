@@ -8,9 +8,11 @@ namespace Dominio
 {
     public class Marca
     {
+        //Propiedades para almacenar y obtener los valore que proviene de la DB
         public int IdMarca { get; set; }
         public string DescripcionMarca { get; set;}
 
+        //Sobrecarta del Método
         public override string ToString()
         {
             return DescripcionMarca;

@@ -7,6 +7,7 @@ using Dominio;
 
 namespace Negocio
 {
+    //En esta clase defino el método para obtener las categorías cargadas en la DB.
     public class CategoriaNegocio
     {
         private List<Categoria> categorias = new List<Categoria>();
